@@ -11,7 +11,7 @@ const upsertNotif = (userId, appId, type, title, message) =>
   Notification.findOneAndUpdate(
     { user: userId, entityType: "APPLICATION", entityId: appId, key: "INTERVIEW" },
     {
-      $set: { type, title, message, link: `/applications/${appId}`, isRead: true },
+      $set: { type, title, message, link: `/applications/${appId}`, isRead: false },
       $setOnInsert: { entityType: "APPLICATION", entityId: appId, key: "INTERVIEW" },
     },
     { upsert: true, new: true, runValidators: true }
@@ -20,23 +20,41 @@ const upsertNotif = (userId, appId, type, title, message) =>
 export const reScheduledInterView = async (req, res) => {
   try {
     if (req.user?.role !== "recruiter")
-      return res.status(403).json({ success: false, message: "Only recruiter can reschedule" });
+      return res.status(403).json({ 
+    success: false,
+     message: "Only recruiter can reschedule"
+     });
 
     const { applicationId } = req.params;
     const { scheduleAt, mode, meetingLink, location, note } = req.body || {};
-    if (!oid(applicationId)) return res.status(400).json({ success: false, message: "Invalid applicationId" });
-    if (!scheduleAt) return res.status(400).json({ success: false, message: "scheduleAt is required" });
+    if (!oid(applicationId)) return res.status(400).json({ 
+      success: false,
+       message: "Invalid applicationId"
+       });
+    if (!scheduleAt) return res.status(400).json({
+       success: false, 
+       message: "scheduleAt is required"
+       });
 
     const dt = new Date(scheduleAt);
-    if (isNaN(dt.getTime())) return res.status(400).json({ success: false, message: "Invalid scheduleAt date" });
+    if (isNaN(dt.getTime())) return res.status(400).json({
+       success: false,
+        message: "Invalid scheduleAt date"
+       });
 
     const app = await Application.findById(applicationId)
       .populate("userId", "email name")
       .populate("jobId", "title company");
-    if (!app) return res.status(404).json({ success: false, message: "Application not found" });
+    if (!app) return res.status(404).json({ 
+      success: false,
+       message: "Application not found"
+       });
 
     if (!app.interView) {
-      if (!mode) return res.status(400).json({ success: false, message: "mode is required (first schedule)" });
+      if (!mode) return res.status(400).json({ 
+        success: false, 
+        message: "mode is required (first schedule)"
+       });
       app.interView = {
         scheduleAt: dt,
         mode,
@@ -97,7 +115,10 @@ export const reScheduledInterView = async (req, res) => {
     return res.json({ success: true, message: "interView rescheduled", interView: app.interView.toObject() });
   } catch (e) {
     console.error("reScheduledInterView ERROR:", e);
-    return res.status(500).json({ success: false, message: "Server error" });
+    return res.status(500).json({
+       success: false, 
+       message: "Server error"
+   });
   }
 };
 

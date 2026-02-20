@@ -1,4 +1,4 @@
-import Job from "../models/jobModel.js";
+import jobModel from "../models/jobModel.js";
 import userModel  from "../models/userModel.js";
 
 export const createJob=async(req,res)=>{
