@@ -1,37 +1,43 @@
+import mongoose from "mongoose";
+import User from "../models/userModel.js";
 import ProfileView from "../models/profileViewModel.js";
 
-export const profileViewByRecruiter = async (req, res) => {
-console.log("HIT:", req.method, req.originalUrl);
-console.log("PARAMS:", req.params);
+const isValidId = (id) => mongoose.Types.ObjectId.isValid(id);
 
-
-    const recruiterId = req.user._id;
-    const { candidateId, 
-        //jobId, applicationId
-     } = req.params;
-
-    // const doc = await ProfileView.create({
-    //   candidateId,
-    //   recruiterId,
-    //   //jobId: jobId,
-    //   //applicationId: applicationId,
-    //   ip: req.ip,
-    //   userAgent: req.get("user-agent"),
-    //   viewedAt: new Date(),
-    // });
-
-    const doc = await ProfileView.create({
-  candidateId,
-  recruiterId,
-  ip: req.ip,
-  userAgent: req.get("user-agent"),
-  viewedAt: new Date(),
-});
-
-    res.status(201).json({
-      success: true,
-      message: "Profile view tracked",
-      data: doc,
+export const profileViewByRecruiter = async(req,res)=>{
+  if (req.user?.role !== "recruiter") {
+    return res.status(403).json({
+      success:false,
+      message:"only recruiter"
     });
+  }
+  const {candidateId}=req.params;
+  if (!isValidId(candidateId)) {
+    return res.status(403).json({
+      success:false,
+      message:"only valid candidate Id"
+    });
+  }
+ const candidate = await User.findOne({ _id: candidateId, role: "candidate" })
+  .select("name email resume skills experience location profilePic");
 
-};
+  if (!candidate) {
+    return res.status(403).json({
+      success:false,
+      message:"candidate not found!!!"
+  });
+}
+const profileView = await ProfileView.findOneAndUpdate(
+      { candidateId, recruiterId: req.user._id },
+      {
+        $set: {
+          viewedAt: new Date(),
+          ip: req.ip || null,
+          userAgent: req.get("user-agent") || null,
+        },
+      },
+      { upsert: true, new: true, runValidators: true }
+    );
+
+    return res.status(200).json({ success: true, candidate, profileView });
+ }

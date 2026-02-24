@@ -1,3 +1,5 @@
+
+import User from "../models/userModel.js";
 export const verifyRecruiterByAdmin = async (req,res)=>{
     try{
         const recruiterId = req.params.id;
@@ -11,7 +13,7 @@ export const verifyRecruiterByAdmin = async (req,res)=>{
             return res.status(400).json({message:"User is not a recruiter"});
         }
 
-        recruiter.isVerified = true;
+        recruiter.isVerifiedCandidate = true;
         await recruiter.save();
 
         res.status(200).json({

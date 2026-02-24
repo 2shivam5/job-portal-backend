@@ -76,7 +76,7 @@ export const applyJob = async (req, res) => {
 
     return res.status(201).json({
       success: true,
-      message: "Job application successful",
+      message: "Job applied successfully",
       application,
       appliedBy: {
         userId: req.user._id,
@@ -326,7 +326,7 @@ export const scheduleInterview = async (req, res) => {
 
     const now = new Date();
     const hasActiveInterview =
-      appDoc.interview?.scheduleAt && new Date(appDoc.interview.scheduleAt) > now && appDoc.interview.status !== "cancelled";
+      appDoc.interView?.scheduleAt && new Date(appDoc.interview.scheduleAt) > now && appDoc.interview.status !== "cancelled";
 
     if (hasActiveInterview) {
       const interview = appDoc.interview;

@@ -1,4 +1,4 @@
-import jobModel from "../models/jobModel.js";
+import Job from "../models/jobModel.js";
 import userModel  from "../models/userModel.js";
 
 export const createJob=async(req,res)=>{
@@ -33,7 +33,7 @@ export const createJob=async(req,res)=>{
 };
 export const getJobsById=async(req,res)=>{
     const { id }=req.params;
-    const job=await jobModel.findById(id);
+    const job=await Job.findById(id);
     if (!job) {
         return res.status(404)
         .json({message:"Job not found"});
