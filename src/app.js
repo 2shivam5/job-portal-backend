@@ -8,6 +8,8 @@ import profileViewRoutes from "./routes/profileViewRoutes.js"
 import reScheduleInterViewRoutes from "./routes/reScheduleInterViewRoutes.js";
 import recruiterRoutes from "./routes/recruiterRoutes.js"
 import filterRoutes from "./routes/filterRoutes.js"
+import bookmarkRoutes from "./routes/bookmarkRoutes.js"
+import resetPasswordRoutes from "./routes/resetPasswordRoutes.js";
 
 
 const app = express();
@@ -23,6 +25,7 @@ app.use("/api/proView",profileViewRoutes);
 app.use("/api/reschedule",reScheduleInterViewRoutes);
 app.use("/api/recruiter", recruiterRoutes);
 app.use("/api/job",filterRoutes)
-
+app.use("/api/bookmark", bookmarkRoutes);
+app.use("/api/resetpassword", resetPasswordRoutes);
 
 export default app;

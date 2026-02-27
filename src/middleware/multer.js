@@ -1,7 +1,6 @@
 import multer from 'multer';
 import path from 'path';
 import fs, { existsSync } from 'fs';
-import e from 'express';
 
 const uploadDir = path.join(process.cwd(), 'uploads','resume');
 
